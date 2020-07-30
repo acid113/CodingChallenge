@@ -19,7 +19,21 @@ test("getSales() returns status and user details", () => {
   jest.mock("moment", () => {
     return () => jest.requireActual("moment")("2020-01-01T00:00:00.000Z");
   });
-  jest.mock("moment", () => () => ({ locale: () => "en-GB" }));
+  // jest.mock("moment", () => () => ({ locale: () => "en-GB" }));
+
+  // jest.mock("moment", () => {
+  //   const mMoment = {
+  //     locale: jest.fn(() => "en-GB"),
+  //   };
+
+  //   const fn = jest.fn((newMoment) => {
+  //     mMoment.locale = jest.fn(() => newMoment);
+  //     return mMoment;
+  //   });
+
+  //   return fn;
+  // });
+
   getSales(req, res);
 
   expect(res.status).toHaveBeenCalledWith(200);

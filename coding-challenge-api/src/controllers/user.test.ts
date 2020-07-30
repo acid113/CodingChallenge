@@ -1,6 +1,6 @@
 import { getUser } from "./user";
 
-const mockRequest = (sessionData?: any) => {
+const mockRequest = () => {
   return {};
 };
 
