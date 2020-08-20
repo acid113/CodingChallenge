@@ -1,4 +1,4 @@
-import { getUser } from "./user";
+import getUser from "../controllers/user";
 
 const mockRequest = () => {
   return {};

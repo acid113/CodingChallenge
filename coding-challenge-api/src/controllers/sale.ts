@@ -12,18 +12,21 @@ import { ISalesOrder } from "../models/saleOrder";
 const LOCAL = "en-GB";
 moment.locale(LOCAL);
 
-const getSales = (req: Request, res: Response) => {
-  // console.log("getting sales orders");
+const getSales = async (
+  req: Request,
+  res: Response
+): Promise<Response<ISalesOrder[]>> => {
+  //   console.log("calling real getSales()");
   let salesOrder: ISalesOrder[] = [];
 
-  parseSalesOrderList().then((response) => {
+  return parseSalesOrderList().then((response) => {
     salesOrder = response;
-    // console.log("sales order: ", salesOrder.length);
     return res.status(200).json(salesOrder);
   });
 };
 
 const getStoreList = (): Promise<IStore[]> => {
+  // console.log("calling real getStoreList()");
   const stores: IStore[] = [];
   const filePath = path.join(__dirname, "../../data/stores.csv");
   // console.log("stores path: ", storesPath);
@@ -44,6 +47,7 @@ const getStoreList = (): Promise<IStore[]> => {
 };
 
 const getOrderList = (): Promise<IOrder[]> => {
+  // console.log("calling real getOrderList()");
   const orders: IOrder[] = [];
   const filePath = path.join(__dirname, "../../data/orders.csv");
   // console.log("order path: ", orderPath);
@@ -64,6 +68,7 @@ const getOrderList = (): Promise<IOrder[]> => {
 };
 
 const parseDate = (date: string, locale: string, format: string): Date => {
+  //   console.log("called real parseDate()");
   moment.locale(locale);
 
   const parsedDate = moment(date, format);
@@ -89,13 +94,19 @@ const getDaysOverDue = (dateToCompare: Date, format?: string) => {
 };
 
 const parseSalesOrderList = async (): Promise<ISalesOrder[]> => {
+  //   console.log("calling real parseSalesOrderList()");
   // const LOCAL = "en-GB";
   const DATE_FORMAT = "DD/MM/YYYY";
   const PENDING = "Pending";
 
   const salesOrder: ISalesOrder[] = [];
-  const stores = await getStoreList();
-  const orders = await getOrderList();
+  //   const stores = await getStoreList();
+  //   const orders = await getOrderList();
+  const stores = await salesFunction.getStoreList();
+  const orders = await salesFunction.getOrderList();
+
+  //   console.log("stores: ", stores);
+  //   console.log("order: ", orders);
 
   // moment.locale(LOCAL);
 
@@ -105,13 +116,15 @@ const parseSalesOrderList = async (): Promise<ISalesOrder[]> => {
     });
 
     if (store) {
-      const parsedShipDate = parseDate(
+      //   const parsedShipDate = parseDate(
+      const parsedShipDate = salesFunction.parseDate(
         order.latest_ship_date,
         LOCAL,
         DATE_FORMAT
       );
 
-      const daysOverdue = getDaysOverDue(parsedShipDate);
+      //   const daysOverdue = getDaysOverDue(parsedShipDate);
+      const daysOverdue = salesFunction.getDaysOverDue(parsedShipDate);
 
       if (order.shipment_status === PENDING && daysOverdue > 0) {
         const saleOrder: ISalesOrder = {
@@ -136,4 +149,15 @@ const parseSalesOrderList = async (): Promise<ISalesOrder[]> => {
   return await salesOrder;
 };
 
-export { getSales };
+// export default getSales;
+
+// * Originally only getSales() was public but 'exported' other methods to allow mocking those methods
+const salesFunction = {
+  getSales,
+  getStoreList,
+  getOrderList,
+  parseDate,
+  getDaysOverDue,
+};
+
+export default salesFunction;
