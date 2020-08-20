@@ -19,10 +19,8 @@ const getSales = async (
   //   console.log("calling real getSales()");
   let salesOrder: ISalesOrder[] = [];
 
-  return parseSalesOrderList().then((response) => {
-    salesOrder = response;
-    return res.status(200).json(salesOrder);
-  });
+  salesOrder = await parseSalesOrderList();
+  return res.status(200).json(salesOrder);
 };
 
 const getStoreList = (): Promise<IStore[]> => {
