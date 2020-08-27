@@ -10,7 +10,6 @@ import salesFunction from "../controllers/sale";
 
 // jest.mock("../controllers/sale.ts");
 
-// const mockRequest = (sessionData?: any) => {
 const mockRequest = () => {
   return {};
 };
@@ -77,18 +76,34 @@ const finalSalesOrder: ISalesOrder[] = [
   },
 ];
 
-test("getSales() returns order list", async () => {
-  const req: any = mockRequest();
-  const res = mockResponse();
+const req: any = mockRequest();
+const res = mockResponse();
 
-  salesFunction.getOrderList = jest.fn().mockResolvedValue(orders);
-  salesFunction.getStoreList = jest.fn().mockResolvedValue(stores);
-  salesFunction.getDaysOverDue = jest.fn().mockReturnValue(1);
-  salesFunction.parseDate = jest
-    .fn()
-    .mockReturnValue(new Date("2020-08-31T16:00:00.000Z"));
+salesFunction.getOrderList = jest.fn().mockResolvedValue(orders);
+salesFunction.getStoreList = jest.fn().mockResolvedValue(stores);
+salesFunction.getDaysOverDue = jest.fn().mockReturnValue(1);
+salesFunction.parseDate = jest
+  .fn()
+  .mockReturnValue(new Date("2020-08-31T16:00:00.000Z"));
 
-  await salesFunction.getSales(req, res);
-  expect(res.status).toHaveBeenCalledWith(200);
-  expect(res.json).toHaveBeenCalledWith(finalSalesOrder);
+describe.only("Sales API test", () => {
+  test("getSales()", async () => {
+    await salesFunction.getSales(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(finalSalesOrder);
+  });
+});
+
+describe("this is a status only test", () => {
+  test("getSales() returns status 200", async () => {
+    await salesFunction.getSales(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+});
+
+describe("this is a list only test", () => {
+  test("getSales() returns order list", async () => {
+    await salesFunction.getSales(req, res);
+    expect(res.json).toHaveBeenCalledWith(finalSalesOrder);
+  });
 });

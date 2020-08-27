@@ -11,17 +11,19 @@ const mockResponse = () => {
   return res;
 };
 
-test("getUser() returns status and user details", () => {
-  const req: any = mockRequest();
-  const res = mockResponse();
+describe.skip("this is a user test", () => {
+  test("getUser() returns status and user details", () => {
+    const req: any = mockRequest();
+    const res = mockResponse();
 
-  getUser(req, res);
+    getUser(req, res);
 
-  expect(res.status).toHaveBeenCalledWith(200);
-  expect(res.json).toHaveBeenCalledWith({
-    firstName: "Jane",
-    lastName: "Doe",
-    email: "janedoe@email.com",
-    id: 1,
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "janedoe@email.com",
+      id: 1,
+    });
   });
 });
